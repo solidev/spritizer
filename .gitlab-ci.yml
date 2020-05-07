@@ -1,0 +1,21 @@
+include:
+  - template: SAST.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+stages:
+  - build
+  - test
+
+build:
+  image: docker:stable
+  stage: build
+  tags:
+    - indocker
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:stable-dind
+  script:
+    - echo "Building to gitlab"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker build --pull -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME" .
+    - docker push $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
