@@ -42,7 +42,7 @@ OPTIONS:
 using example/input directory containing `tux[1-8].png` and `thetux[1-2].svg`
 
 ```bash
-spritizer gen -resize 64 example/input example/output
+spritizer gen --resize 64 example/input example/output
 ```
 
 generates the following png

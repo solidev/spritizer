@@ -28,6 +28,7 @@ const jsonTemplate = `
 `
 
 func (coll *Collection) Export(c *cli.Context) error {
+	logrus.Debug("Exporting collection")
 	img := image.NewRGBA(image.Rect(0, 0, coll.W, coll.H))
 	for _, s := range coll.Sprites {
 		pos := image.Point{X: s.X, Y: s.Y}

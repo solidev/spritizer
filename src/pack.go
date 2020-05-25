@@ -23,6 +23,7 @@ func Max(x, y int) int {
 // Organize images in a box.
 // Code from https://github.com/mapbox/potpack
 func (coll *Collection) Organize() error {
+	logrus.Debug("Organizing images")
 	// calculate total box area and maximum box width
 	area := 0
 	maxWidth := 0
@@ -113,6 +114,11 @@ func (coll *Collection) Organize() error {
 	}
 	coll.W = width
 	coll.H = height
-	coll.Fill = (area * 100) / (width * height)
+	if width*height != 0 {
+		coll.Fill = (area * 100) / (width * height)
+	} else {
+		logrus.Error("Zero fill : width * height = 0")
+		coll.Fill = -1
+	}
 	return nil
 }

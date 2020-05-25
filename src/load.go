@@ -107,6 +107,7 @@ func loadSvg(filename string, resize int, preferInkcape bool) (int, int, image.I
 
 func (coll *Collection) Load(c *cli.Context) error {
 	inputdir := c.Args().Get(0)
+	logrus.Debugf("Loading images from %s", inputdir)
 	files, err := ioutil.ReadDir(inputdir)
 	if err != nil {
 		return err
