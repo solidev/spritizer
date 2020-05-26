@@ -49,12 +49,12 @@ func loadSvgOkSvg(filename string, resize int) (int, int, image.Image, error) {
 		logrus.Warningf("oksvg not able to process %s : %v", filename, errSvg)
 		return 0, 0, nil, errSvg
 	}
-	var w, h int
-	if resize == 0 {
-		w, h = int(icon.ViewBox.W), int(icon.ViewBox.H)
-	} else {
-		w = resize
-		h = int(icon.ViewBox.H * float64(resize) / icon.ViewBox.W)
+	w, h := int(icon.ViewBox.W), int(icon.ViewBox.H)
+	if resize != 0 {
+		if h > resize {
+			h = resize
+			w = int(icon.ViewBox.W * float64(resize) / icon.ViewBox.H)
+		}
 	}
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
 	scannerGV := rasterx.NewScannerGV(w, h, img, img.Bounds())
@@ -72,8 +72,18 @@ func loadSvgInkscape(filename string, resize int) (int, int, image.Image, error)
 		logrus.Debugf("Exporting %s to png with inkscape", filename)
 		cmd = exec.Command("inkscape", "--export-png", pngout, "--export-background-opacity", "0", filename)
 	} else {
-		logrus.Debugf("Exporting %s to png with inkscape width %d", filename, resize)
-		cmd = exec.Command("inkscape", "--export-png", pngout, "-w", strconv.Itoa(resize), "--export-background-opacity", "0", filename)
+		fh, err := getHeightInkscape(filename)
+		if err != nil {
+			logrus.Warning(err)
+			return 0, 0, nil, err
+		}
+		h := int(fh)
+		logrus.Debugf("Image orig. height : %d", h)
+		if h > resize {
+			h = resize
+		}
+		logrus.Debugf("Exporting %s to png with inkscape (height : %d px)", filename, h)
+		cmd = exec.Command("inkscape", "--export-png", pngout, "-h", strconv.Itoa(h), "--export-background-opacity", "0", filename)
 	}
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
@@ -86,6 +96,21 @@ func loadSvgInkscape(filename string, resize int) (int, int, image.Image, error)
 		return 0, 0, nil, err
 	}
 	return loadImage(pngout)
+}
+
+func getHeightInkscape(filename string) (float64, error) {
+	var cmd *exec.Cmd
+	cmd = exec.Command("inkscape", filename, "--query-height")
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err == nil {
+		return strconv.ParseFloat(stdout.String(), 32)
+	}
+	return 0, err
+
 }
 
 func loadSvg(filename string, resize int, preferInkcape bool) (int, int, image.Image, error) {
@@ -137,11 +162,11 @@ func (coll *Collection) Load(c *cli.Context) error {
 				logrus.Errorf("Error importing %s : %v", path, erri)
 				continue
 			}
-			if resize != 0 {
-				logrus.Debugf("Resizing image %s to %d x %d", path, resize, (resize*h)/w)
-				data = imaging.Resize(data, resize, (resize*h)/w, imaging.Lanczos)
-				h = (resize * h) / w
-				w = resize
+			if resize != 0 && h > resize {
+				w = (resize * w) / h
+				h = resize
+				logrus.Debugf("Resizing image %s to %d x %d", path, w, h)
+				data = imaging.Resize(data, w, h, imaging.Lanczos)
 			}
 		}
 		coll.Sprites = append(coll.Sprites, &Sprite{

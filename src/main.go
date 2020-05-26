@@ -46,7 +46,7 @@ func main() {
 					&cli.IntFlag{
 						Name:     "resize",
 						Aliases:  nil,
-						Usage:    "Resize to [resize] pixels width",
+						Usage:    "Resize to max [resize] pixels height",
 						Required: false,
 						Hidden:   false,
 					},

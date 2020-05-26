@@ -1,72 +1,79 @@
 {
 	"thetux": {
-		"height": 75,
-		"width": 64,
+		"height": 64,
+		"width": 54,
 		"pixelRatio": 1,
 		"x": 0,
+		"y": 0
+	},
+	"thetux2": {
+		"height": 64,
+		"width": 66,
+		"pixelRatio": 1,
+		"x": 54,
 		"y": 0
 	},
 	"tux1": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 64,
+		"x": 120,
 		"y": 0
 	},
 	"tux2": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 128,
-		"y": 0
+		"x": 0,
+		"y": 64
 	},
 	"tux3": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 0,
-		"y": 75
+		"x": 64,
+		"y": 64
 	},
 	"tux4": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 64,
-		"y": 75
+		"x": 128,
+		"y": 64
+	},
+	"tux5": {
+		"height": 64,
+		"width": 81,
+		"pixelRatio": 1,
+		"x": 0,
+		"y": 128
 	},
 	"tux6": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 128,
-		"y": 75
+		"x": 81,
+		"y": 128
 	},
 	"tux7": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 0,
-		"y": 139
+		"x": 145,
+		"y": 128
 	},
 	"tux8": {
 		"height": 64,
 		"width": 64,
 		"pixelRatio": 1,
-		"x": 64,
-		"y": 139
-	},
-	"thetux2": {
-		"height": 61,
-		"width": 64,
-		"pixelRatio": 1,
-		"x": 128,
-		"y": 139
-	},
-	"tux5": {
-		"height": 50,
-		"width": 64,
-		"pixelRatio": 1,
 		"x": 0,
-		"y": 203
+		"y": 192
+	},
+	"cross-t": {
+		"height": 27,
+		"width": 23,
+		"pixelRatio": 1,
+		"x": 64,
+		"y": 192
 	}
 }

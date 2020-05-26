@@ -5,6 +5,9 @@ Create a pack of sprites from a directory of png/jpg/gif/svg images.
 Images are packed at best to a square-ish png file, and their size and coordinates are exported to a json file.
 
 
+## Usage
+
+### Global command
 
 ```
 NAME:
@@ -23,6 +26,7 @@ GLOBAL OPTIONS:
    --help, -h  show help (default: false)
 ```
 
+### Gen command
 
 ```
 NAME:
@@ -32,12 +36,60 @@ USAGE:
    gen - generate sprites
 
 OPTIONS:
-   --inkscape              Use inkscape if available to process svg (default: false)
-   --resize value          Resize to [resize] pixels width (default: 0)
-   --name value, -n value  Output name (default: "sprite")
+   --inkscape                  Use inkscape if available to process svg (default: false)
+   --resize value              Resize to [resize] pixels width (default: 0)
+   --name value, -n value      Output name (default: "sprite")
+   --template value, -t value  Go template to use for textual data
+   --ext value, -e value       Summary file extension (default: ".json")
+   --help, -h                  show help (default: false)
 ```
 
-## Example
+Default template for output is : 
+
+```gotemplate
+{{- $last := sub ( len .Sprites ) 1 -}}
+{	
+{{- range $i, $c := .Sprites }}
+	"{{ $c.Name }}": {
+		"height": {{$c.H}},
+		"width": {{$c.W}},
+		"pixelRatio": 1,
+		"x": {{$c.X}},
+		"y": {{$c.Y}}
+	}{{ if ne $i $last }},{{ end }}
+{{- end }}
+}
+```
+
+The context for template processing is the images collection : 
+
+```go
+type Collection struct {
+	W       int        // collection total width
+	H       int        // collection total height
+	Fill    int        // collection fill percent
+	Sprites []*Sprite  // list of sprites
+}
+```
+
+with sprites given as 
+
+```go
+type Sprite struct {
+	W    int          // sprite width
+	H    int          // sprite height
+	X    int          // sprite x position
+	Y    int          // sprite y position
+	Name string       // sprite name
+	File string       // sprite orig file
+	Data image.Image  // sprite image data
+}
+```
+
+http://masterminds.github.io/sprig/ library is loaded for template processing.
+ 
+
+## Examples
 
 using example/input directory containing `tux[1-8].png` and `thetux[1-2].svg`
 
@@ -82,13 +134,13 @@ cannot be rasterized or may contain some errors. If `inkscape` is available, it 
 rasterize the svg files not recognized by oksvg. You can choose to always use inkscape using 
 the `--inkscape` flag.
 
-`--resize WIDTH` argument force all images to be resized (upscaled or downscaled) to `WIDTH` 
-pixels width.
+`--resize HEIGHT` argument force all images with a height greater or requal to `HEIGHT` to be resized to `HEIGHT` 
+pixels height.
 
 
 ## Docker
 
-A docker container containing `inkscape` and `spritizer` is available.
+A docker container containing `inkscape` and `spritizer` is available : https://hub.docker.com/r/jmbarbier/spritizer
 
 ```bash
 docker run --rm -v ${pwd}:/data jmbarbier/spritizer gen --resize 100 --inkscape /data/input /data/output
